@@ -29,10 +29,8 @@ jobs:
           chmod -c -R +rX "doc" | while read line; do
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
-          tar \
-            --dereference --hard-dereference \
-            --directory "doc" \
-            -cvf "$RUNNER_TEMP/artifact.tar" \
+          cd "doc"
+          tar -cvf "$RUNNER_TEMP/artifact.tar" \
             --exclude=.git \
             --exclude=.github \
             .
@@ -42,8 +40,9 @@ jobs:
         uses: actions/configure-pages@v3
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
+          name: pages-artifact
           path: ${{ runner.temp }}/artifact.tar
 
       - name: Deploy to GitHub Pages
